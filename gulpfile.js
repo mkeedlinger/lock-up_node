@@ -5,15 +5,21 @@ var // Core
     config = require('./config');
 
 gulp.task('default', function() {
-    nodemon({
-        script: 'index.js',
-        ext: 'js',
-        ignore: ['gulpfile.js']
-    });
+    console.log('Nothing here.. YET.');
 });
 
 gulp.task('bump', function () {
     gulp.src('./package.json')
     .pipe(bump({type:'patch'}))
+    .pipe(gulp.dest('./'));
+});
+gulp.task('bumps', function () {
+    gulp.src('./package.json')
+    .pipe(bump({type:'minor'}))
+    .pipe(gulp.dest('./'));
+});
+gulp.task('bumpss', function () {
+    gulp.src('./package.json')
+    .pipe(bump({type:'major'}))
     .pipe(gulp.dest('./'));
 });
