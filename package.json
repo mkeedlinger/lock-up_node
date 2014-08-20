@@ -1,0 +1,21 @@
+{
+  "name": "lock-up",
+  "description": "Easy and secure authentication",
+  "version": "0.0.1",
+  "homepage": "http://github.com/stevelacy/gulp-bump",
+  "repository": "git://github.com/stevelacy/gulp-bump.git",
+  "author": "mkeedlinger",
+  "main": "./index.js",
+  "dependencies": {
+    "colors": "^0.6.2",
+    "express": "~4.8.4",
+    "js-schema": "^0.6.4",
+    "lodash": "^2.4.1",
+    "request": "~2.40.0",
+    "thinky": "~1.13.12",
+    "validate-obj": "^0.8.3",
+    "validator": "~3.17.0"
+  },
+  "devDependencies": {},
+  "keywords": []
+}
