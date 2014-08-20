@@ -1,6 +1,5 @@
 var // Core
     gulp = require('gulp'), // The main gulp module
-    nodemon = require('gulp-nodemon'),
     notify = require('gulp-notify'),
     bump = require('gulp-bump'),
     config = require('./config');
