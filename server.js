@@ -55,22 +55,78 @@ var def = function (options, api) {
         api.isExistantUsername(req.params.username).then(function (bool) {
             res.status(200).json(result: bool);
         }).catch(function (err) {
-            res.status(500).json(err: err);
+            res.status(500).json(result: err);
         });
     });
     app.get('/api/getId/:username', function (req, res) {
         api.getId(req.params.username).then(function (id) {
             res.status(200).json(result: id);
+        }).catch(er.NonExistingUserErr, function (err) {
+            res.status(409).json(result: err);
         }).catch(function (err) {
-            res.status(500).json(err: err);
+            res.status(500).json(result: err);
         });
     });
     app.get('/api/addUser/:username/:password', function (req, res) {
         api.addUser(req.params.username, decodeURIComponent(req.params.password))
-        .then(function (argument) {
-            // body...
-        })
-    })
+        .then(function (id) {
+            res.status(200).json({result: id});
+        }).catch(er.ExistingUserErr, function (err) {
+            res.status(409).json({result: err});
+        }).catch(function (err) {
+            res.status(500).json({result: err});
+        });
+    });
+    app.get('/api/getUserInfo/:id', function (req, res) {
+        api.getUserInfo(decodeURIComponent(req.params.id)).then(function (user) {
+            res.status(200).json({result: user});
+        }).catch(er.NonExistingUserErr, function (err) {
+            res.status(409).json({result: err});
+        }).catch(function (err) {
+            res.status(500).json({result: err});
+        });
+    });
+    app.get('/api/isCorrectCredentials/:username/:password', function (req, res) {
+        api.isCorrectCredentials(
+            req.params.username,
+            decodeURIComponent(req.params.password)
+        ).then(function (bool) {
+            res.status(200).json({result: bool});
+        }).catch(er.NonExistingUserErr, function (err) {
+            res.status(409).json({result: err});
+        }).catch(function (err) {
+            res.status(500).json({result: err});
+        });
+    });
+    app.get('/api/changePassword/:id/:password', function (req, res) {
+        api.changePassword(
+            decodeURIComponent(req.params.id),
+            decodeURIComponent(req.params.password)
+        ).then(function () {
+            res.status(200).end();
+        }).catch(function (err) {
+            res.status(500).json({result: err});
+        });
+    });
+    app.get('/api/deleteUser/:id', function (req, res) {
+        api.deleteUser(decodeURIComponent(req.params.id)).then(function () {
+            res.status(200).end();
+        }).catch(er.NonExistingUserErr, function (err) {
+            res.status(409).json({result: err});
+        }).catch(function (err) {
+            res.status(500).json({result: err});
+        });
+    });
+    app.get('/api/changeUsername/:id/:username', function (req, res) {
+        api.changeUsername(decodeURIComponent(req.params.id), req.params.username)
+        .then(function () {
+            res.status(200).end();
+        }).catch(er.ExistingUserErr, function (err) {
+            res.status(409).json({result: err});
+        }).catch(function (err) {
+            res.status(500).json({result: err});
+        });
+    });
 }
 
 ////
