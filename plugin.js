@@ -59,7 +59,7 @@ module.exports = function (options) {
         ).pluck('id').run().then(function (user) {
             console.l('if this is a list, you need to change your code', user);
             if (!user) {
-                throw new NonExistingUserErr(username);
+                throw new er.NonExistingUserErr(username);
             }
             return user.id;
         }, function (err) {
@@ -131,8 +131,10 @@ module.exports = function (options) {
                 "passHash": newHash,
                 "passSalt": newSalt
             }).run().catch(function (err) {
-                if (!(err instanceof PassHashErr)) {
+                if (!(err instanceof er.PassHashErr)) {
                     throw new er.DatabaseErr('changePassword', err);
+                } else {
+                    throw err;
                 }
             });
         });
