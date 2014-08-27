@@ -33,18 +33,21 @@ module.exports = function (options) {
     }
 
     ////
-    // meat
+    // db meat
     ////
-    var dbConn = dbConn(options.db),
+    var dbConn = require('./module/dbConnection')(options.db),
         Users = userTable(dbConn);
 
     ////
     // API
     ////
+    var p = {};
     p.isExistantUsername = function (username) {
         return Users.getAll(username.toLowerCase(), {index: 'username'}
-        ).pluck('username').run().then(function (dupe) {
-            console.l(dupe.length, '<- that should be undefined or 0');
+        ).pluck('username').execute().then(function (cursor) {
+            return cursor.toArray();
+        }).then(function (dupe) {
+            // dupe is an array
             if (dupe.length) {
                 return true;
             } else {
@@ -81,31 +84,37 @@ module.exports = function (options) {
             newUser.passHash = finalHash;
             newUser.passSalt = salt;
 
-            return Users.save(newUser);
+            return Users.insert(newUser).execute();
         }).then(function (res) {
             return res.generated_keys[0];
         }).catch(function (err) {
-            if (!(err instanceof ExistingUserErr)) {
+            if (!(err instanceof er.ExistingUserErr)) {
                 throw new er.DatabaseErr('addUser', err);
+            } else {
+                throw err;
             }
         });
     };
     p.getUserInfo = function (id) {
-        return Users.get(id).without(
-            'passHash',
-            'passSalt',
-            'lockupVersion',
-            'username'
-        ).run().then(function (user) {
-            if (!user) {
+        return Users.get(id).execute().then(function (user) {
+            if (user) {
+                delete user.passHash;
+                delete user.passSalt;
+                delete user.lockupVersion;
+                delete user.username;
+                return user
+            } else {
                 throw new er.NonExistingUserErr(id);
             }
+        }).then(function (user) {
             user.username = user.displayName;
             delete user.displayName;
             return user;
         }).catch(function (err) {
-            if (!(err instanceof NonExistingUserErr)) {
+            if (!(err instanceof er.NonExistingUserErr)) {
                 throw new er.DatabaseErr('getUserInfo', err);
+            } else {
+                throw err;
             }
         });
     };
@@ -122,6 +131,8 @@ module.exports = function (options) {
         }).catch(function (err) {
             if (!(err instanceof PassHashErr)) {
                 throw new er.DatabaseErr('isCorrectCredentials', err);
+            } else {
+                throw err;
             }
         });
     };

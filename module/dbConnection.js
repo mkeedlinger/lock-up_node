@@ -1,5 +1,4 @@
-var thinky = require('thinky'),
-    r = thinky.r;
+var thinky = require('thinky');
 
 module.exports = function (options) {
     return thinky({

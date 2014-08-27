@@ -53,18 +53,18 @@ var def = function (options, api) {
     });
     app.get('/api/isExistantUsername/:username', function (req, res) {
         api.isExistantUsername(req.params.username).then(function (bool) {
-            res.status(200).json(result: bool);
+            res.status(200).json({result: bool});
         }).catch(function (err) {
-            res.status(500).json(result: err);
+            res.status(500).json({result: err});
         });
     });
     app.get('/api/getId/:username', function (req, res) {
         api.getId(req.params.username).then(function (id) {
-            res.status(200).json(result: id);
+            res.status(200).json({result: id});
         }).catch(er.NonExistingUserErr, function (err) {
-            res.status(409).json(result: err);
+            res.status(409).json({result: err});
         }).catch(function (err) {
-            res.status(500).json(result: err);
+            res.status(500).json({result: err});
         });
     });
     app.get('/api/addUser/:username/:password', function (req, res) {
