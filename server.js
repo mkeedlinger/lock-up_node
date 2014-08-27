@@ -12,7 +12,6 @@ var // http
     fs = require('fs'),
 
     // helpers
-    config = require('./config'),
     Promise = require('bluebird'),
 
     plugin = require('./plugin.js');

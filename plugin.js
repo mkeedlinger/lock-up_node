@@ -14,7 +14,6 @@ var //schema
     checkPass = require('./module/checkPass'),
 
     // helpers
-    config = require('./config'),
     Promise = require('bluebird'),
     er = require('./module/errors');
 
