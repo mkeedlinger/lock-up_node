@@ -10,16 +10,16 @@ gulp.task('default', function() {
 
 gulp.task('bump', function () {
     gulp.src('./package.json')
-    .pipe(bump({type:'patch'}))
+    .pipe(bump({type:'patch', indent: 4}))
     .pipe(gulp.dest('./'));
 });
 gulp.task('bumps', function () {
     gulp.src('./package.json')
-    .pipe(bump({type:'minor'}))
+    .pipe(bump({type:'minor', indent: 4}))
     .pipe(gulp.dest('./'));
 });
 gulp.task('bumpss', function () {
     gulp.src('./package.json')
-    .pipe(bump({type:'major'}))
+    .pipe(bump({type:'major', indent: 4}))
     .pipe(gulp.dest('./'));
 });
