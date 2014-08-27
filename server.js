@@ -27,8 +27,8 @@ var def = function (options, api) {
     ////
     // meat
     ////
-    if (!api) {
-        api = plugin(options.db);
+    if (api === undefined) {
+        var api = plugin(options.db);
     }
     var httpsOptions = {
             key: fs.readFileSync(options.https.privateKey),
