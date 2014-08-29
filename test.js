@@ -1,12 +1,11 @@
-var lu = require('./index').server;
+var lu = require('./index');
 lu = lu({
-    port: 8000,
-    apiAuth: [{
-        username: 'banana', password: 'bananabanana'
-    }],
-    db: 'test',
-    https: {
-        privateKey: 'server.key',
-        certificate: 'server.crt'
-    }
+    db: 'test'
+});
+lu.addUser('sqfsdfsdf','sdsfsdfs').then(function (re) {
+    return lu.getUserInfo(re);
+}).then(function (ob) {
+    console.log(ob);
+}).catch(function (er) {
+    console.error(er);
 });

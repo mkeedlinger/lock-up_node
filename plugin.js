@@ -84,9 +84,9 @@ module.exports = function (options) {
             newUser.passHash = saltAndHash[1];
             newUser.passSalt = saltAndHash[0];
 
-            return Users.insert(newUser).execute();
+            return Users.save(newUser);
         }).then(function (res) {
-            return res.generated_keys[0];
+            return res[0].id;
         }).catch(function (err) {
             if (!(err instanceof er.ExistingUserErr)) {
                 throw new er.DatabaseErr('addUser', err);
@@ -142,7 +142,9 @@ module.exports = function (options) {
             return Users.get(id).update({
                 "passHash": saltAndHash[1],
                 "passSalt": saltAndHash[0]
-            }).execute().catch(function (err) {
+            }).execute().then(function () {
+                return null;
+            }).catch(function (err) {
                 console.l(err)
                 if (!(err instanceof er.PassHashErr)) {
                     throw new er.DatabaseErr('changePassword', err);
@@ -154,11 +156,10 @@ module.exports = function (options) {
     };
     p.deleteUser = function (id) {
         return Users.get(id).delete().execute().then(function (res) {
-
             if (res.skipped) {
                 throw new er.NonExistingUserErr(id);
             }
-            return res;
+            return null;
         }).catch(function (err) {
             if (err instanceof er.NonExistingUserErr) {
                 throw err;
@@ -177,6 +178,8 @@ module.exports = function (options) {
                     displayName: newUsername
                 }).execute();
             }
+        }).then(function () {
+            return null;
         }).catch(function (err) {
             throw new er.DatabaseErr('changeUsername', err);
         });

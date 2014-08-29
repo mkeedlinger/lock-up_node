@@ -2,7 +2,7 @@ var val = require('validator');
 
 module.exports = function (dbConnection) {
     var r = dbConnection.r,
-        x = dbConnection.createModel("User", {
+        x = dbConnection.createModel("Users", {
             id: String,
             username: {
                 _type: String,
@@ -36,7 +36,7 @@ module.exports = function (dbConnection) {
                 _type: Number,
                 default: 1
             },
-            created: {
+            createdAt: {
                 _type: Date,
                 default: r.now(),
                 options: {
