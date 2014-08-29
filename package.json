@@ -1,6 +1,6 @@
 {
   "name": "lock-up",
-  "description": "Easy and secure authentication in node, or as a server",
+  "description": "Easy, secure, opinionated authentication",
   "version": "0.0.2",
   "homepage": "https://github.com/mkeedlinger/lock-up_node/wiki",
   "repository": {
