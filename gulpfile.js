@@ -1,11 +1,15 @@
 var // Core
     gulp = require('gulp'), // The main gulp module
     notify = require('gulp-notify'),
-    bump = require('gulp-bump'),
-    config = require('./config');
+    bump = require('gulp-bump')
+    nodemon = require('gulp-nodemon');
 
 gulp.task('default', function() {
-    console.log('Nothing here.. YET.');
+    nodemon({
+        script: 'test.js',
+        ext: 'js',
+        ignore: ['node_modules/']
+    });
 });
 
 gulp.task('bump', function () {

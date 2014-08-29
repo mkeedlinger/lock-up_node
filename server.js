@@ -3,7 +3,6 @@ var // http
     express = require('express'),
     request = require('request'),
     https = require('https'),
-    httpAuth = require('basic-auth'),
 
     // schema
     schema = require('./module/objSchema'),
@@ -12,11 +11,10 @@ var // http
     fs = require('fs'),
 
     // helpers
-    Promise = require('bluebird'),
+    Promise = require('bluebird')
+    er = require('./module/errors');
 
-    plugin = require('./plugin.js');
-
-var def = function (options, api) {
+module.exports = function (options, api) {
     // check options
     var optionErrors = schema.check(options, schema.serverSchema);
     if (optionErrors) {
@@ -27,7 +25,7 @@ var def = function (options, api) {
     // meat
     ////
     if (api === undefined) {
-        var api = plugin(options.db);
+        var api = require('./plugin')(options);
     }
     var httpsOptions = {
             key: fs.readFileSync(options.https.privateKey),
@@ -35,8 +33,15 @@ var def = function (options, api) {
         },
         app = express();
     app.use(function (req, res, next) {
-        var creds = httpAuth(req);
-        if (creds) {
+        var parts = req.headers['authorization']||'',
+            creds = {};
+        parts = parts.split(/\s+/).pop()||'';
+        parts = new Buffer(parts, 'base64').toString();
+        parts = parts.split(/:/);
+        creds.name = parts[0];
+        creds.pass = parts[1];
+
+        if (creds.name && creds.pass) {
             for (var i = 0; i < options.apiAuth.length; i++) {
                 if (options.apiAuth[i].username === creds.name
                     && options.apiAuth[i].password === creds.pass) {
@@ -77,7 +82,7 @@ var def = function (options, api) {
         });
     });
     app.get('/api/getUserInfo/:id', function (req, res) {
-        api.getUserInfo(decodeURIComponent(req.params.id)).then(function (user) {
+        api.getUserInfo(req.params.id).then(function (user) {
             res.status(200).json({result: user});
         }).catch(er.NonExistingUserErr, function (err) {
             res.status(409).json({result: err});
@@ -102,14 +107,14 @@ var def = function (options, api) {
             decodeURIComponent(req.params.id),
             decodeURIComponent(req.params.password)
         ).then(function () {
-            res.status(200).end();
+            res.status(200).json({result: null});
         }).catch(function (err) {
             res.status(500).json({result: err});
         });
     });
     app.get('/api/deleteUser/:id', function (req, res) {
-        api.deleteUser(decodeURIComponent(req.params.id)).then(function () {
-            res.status(200).end();
+        api.deleteUser(req.params.id).then(function () {
+            res.status(200).json({result: null});
         }).catch(er.NonExistingUserErr, function (err) {
             res.status(409).json({result: err});
         }).catch(function (err) {
@@ -117,42 +122,19 @@ var def = function (options, api) {
         });
     });
     app.get('/api/changeUsername/:id/:username', function (req, res) {
-        api.changeUsername(decodeURIComponent(req.params.id), req.params.username)
+        api.changeUsername(req.params.id, req.params.username)
         .then(function () {
-            res.status(200).end();
+            res.status(200).json({result: null});
         }).catch(er.ExistingUserErr, function (err) {
             res.status(409).json({result: err});
         }).catch(function (err) {
             res.status(500).json({result: err});
         });
     });
-}
+    app.get('*', function (req, res) {
+        res.status(400).json({result: "Bad API Request"});
+    });
 
-////
-// Custom errors
-////
-/*
-    there seems to be a lot of "right" ways to do this. I decided that I would
-    use the way provided by MDN, they seem reliable :)
-    http://goo.gl/1qvOzK
-*/
-function ExistingUserErr(message) {
-  this.name = "ExistingUserErr";
-  this.message = message || "Existing user with that name";
+    var httpsServer = https.createServer(httpsOptions, app);
+    httpsServer.listen(options.port || 8080);
 }
-ExistingUserErr.prototype = new Error();
-ExistingUserErr.prototype.constructor = ExistingUserErr;
-
-function NonExistingUserErr(message) {
-  this.name = "NonExistingUserErr";
-  this.message = message || "User did not exist";
-}
-NonExistingUserErr.prototype = new Error();
-NonExistingUserErr.prototype.constructor = NonExistingUserErr;
-
-function BadOptionsErr(message) {
-  this.name = "BadOptionsErr";
-  this.message = message || "Existing user with that name";
-}
-BadOptionsErr.prototype = new Error();
-BadOptionsErr.prototype.constructor = BadOptionsErr;

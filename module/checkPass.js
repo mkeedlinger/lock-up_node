@@ -10,6 +10,6 @@ module.exports = function (storedHash, checkPass, salt) {
     ).then(function (hash) {
         return scrypt.verifyHashPro(storedHash, hash.toString('base64'));
     }).catch(function (err) {
-        throw new er.PassHashErr(null, err);
+        throw new er.PassHashErr('checkPass', err);
     });
 }

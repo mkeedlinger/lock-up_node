@@ -1,35 +1,42 @@
 {
-    "name": "lock-up",
-    "description": "Easy and secure authentication in node, or as a server",
-    "version": "0.0.2",
-    "homepage": "https://github.com/mkeedlinger/lock-up_node/wiki",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/mkeedlinger/lock-up_node.git"
-    },
-    "bugs": "https://github.com/mkeedlinger/lock-up_node/issues",
-    "author": "mkeedlinger",
-    "license": "GNU GPL v3.0",
-    "main": "./index",
-    "dependencies": {
-        "basic-auth": "~1.0.0",
-        "bluebird": "~2.3.0",
-        "colors": "~0.6.2",
-        "express": "~4.8.4",
-        "js-schema": "~0.6.4",
-        "request": "~2.40.0",
-        "scrypt": "~3.0.1",
-        "thinky": "~1.13.12",
-        "validate-obj": "~0.8.3",
-        "validator": "~3.17.0"
-    },
-    "engines": {
-        "node": ">=0.10.27"
-    },
-    "devDependencies": {
-        "gulp": "~3.8.7",
-        "gulp-bump": "~0.1.11",
-        "gulp-notify": "~1.5.0"
-    },
-    "keywords": ["auth", "authentication", "passwords", "encryption", "scrypt", "pbkdf2"]
+  "name": "lock-up",
+  "description": "Easy and secure authentication in node, or as a server",
+  "version": "0.0.2",
+  "homepage": "https://github.com/mkeedlinger/lock-up_node/wiki",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mkeedlinger/lock-up_node.git"
+  },
+  "bugs": "https://github.com/mkeedlinger/lock-up_node/issues",
+  "author": "mkeedlinger",
+  "license": "GNU GPL v3.0",
+  "main": "./index",
+  "dependencies": {
+    "bluebird": "~2.3.0",
+    "colors": "~0.6.2",
+    "express": "~4.8.4",
+    "js-schema": "~0.6.4",
+    "request": "~2.40.0",
+    "scrypt": "~3.0.1",
+    "thinky": "~1.13.12",
+    "validate-obj": "~0.8.3",
+    "validator": "~3.17.0"
+  },
+  "engines": {
+    "node": ">=0.10.27"
+  },
+  "devDependencies": {
+    "gulp": "~3.8.7",
+    "gulp-bump": "~0.1.11",
+    "gulp-nodemon": "~1.0.4",
+    "gulp-notify": "~1.5.0"
+  },
+  "keywords": [
+    "auth",
+    "authentication",
+    "passwords",
+    "encryption",
+    "scrypt",
+    "pbkdf2"
+  ]
 }

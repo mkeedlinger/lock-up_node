@@ -1,21 +1,14 @@
 var schema = require('validate-obj'),
     val = require('validator');
 
-schema.register('isSecURL', schema.build(
-    function (url, par) {
-        return val.isURL(url, {protocols:['https'], require_protocol: true});
-    }, function (it) {
-        return it + " is not a URL (must be HTTPS)";
-    }
-));
 schema.register('isAlphanumeric', schema.build(
     function (leString, par) {
         return val.isAlphanumeric(leString)
-        && par ? par.length >= par : true
+        && par ? leString.length >= par : true
         && typeof leString === 'string';
     }, function (it, params) {
         if (params) {
-            return typeof it + " is not an alphanumeric string >= " + params;
+            return it + " is not an alphanumeric string >= " + params;
         } else {
             return it + " is not an alphanumeric string";
         }
@@ -50,5 +43,14 @@ module.exports.serverSchema = {
 };
 module.exports.pluginSchema = {
     db: dbSchema
+}
+module.exports.clientSchema = {
+    port: schema.isNumber,
+    host: schema.isString,
+    auth: {
+        username: schema.isAlphanumeric([5]),
+        password: schema.minLength([10])
+    },
+    httpsCa: schema.isString
 }
 module.exports.check = schema.hasErrors;

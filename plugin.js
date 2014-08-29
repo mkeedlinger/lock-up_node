@@ -57,14 +57,15 @@ module.exports = function (options) {
         });
     };
     p.getId = function (username) {
-        Users.getAll(username.toLowerCase(), {index: 'username'}
-        ).pluck('id').run().then(function (user) {
-            console.l('if this is a list, you need to change your code', user);
-            if (!user) {
+        return Users.getAll(username.toLowerCase(), {index: 'username'}
+        ).pluck('id').execute().then(function (cursor) {
+            return cursor.toArray();
+        }).then(function (user) {
+            if (!user[0].id) {
                 throw new er.NonExistingUserErr(username);
             }
-            return user.id;
-        }, function (err) {
+            return user[0].id;
+        }).catch(function (err) {
             throw new er.DatabaseErr('getId', err);
         });
     }
@@ -79,9 +80,9 @@ module.exports = function (options) {
             } else {
                 throw new er.ExistingUserErr(username);
             }
-        }).then(function (salt, finalHash) {
-            newUser.passHash = finalHash;
-            newUser.passSalt = salt;
+        }).then(function (saltAndHash) {
+            newUser.passHash = saltAndHash[1];
+            newUser.passSalt = saltAndHash[0];
 
             return Users.insert(newUser).execute();
         }).then(function (res) {
@@ -121,26 +122,28 @@ module.exports = function (options) {
         return Users.getAll(username.toLowerCase(), {index: 'username'}).pluck(
             'passHash',
             'passSalt'
-        ).run().then(function (user) {
-            console.l(user, "<- this should be a single object");
-            if (user.length) {
+        ).execute().then(function (cursor) {
+            return cursor.toArray();
+        }).then(function (user) {
+            if (!user.length) {
                 throw new er.NonExistingUserErr(username);
             }
-            return checkPass(user.passHash, password, user.passSalt);
+            return checkPass(user[0].passHash, password, user[0].passSalt);
         }).catch(function (err) {
-            if (!(err instanceof PassHashErr)) {
-                throw new er.DatabaseErr('isCorrectCredentials', err);
-            } else {
+            if (err instanceof er.PassHashErr || err instanceof er.NonExistingUserErr) {
                 throw err;
+            } else {
+                throw new er.DatabaseErr('isCorrectCredentials', err);
             }
         });
     };
     p.changePassword = function (id, newPass) {
-        return hashPass(newPass).then(function (newSalt, newHash) {
+        return hashPass(newPass).then(function (saltAndHash) {
             return Users.get(id).update({
-                "passHash": newHash,
-                "passSalt": newSalt
-            }).run().catch(function (err) {
+                "passHash": saltAndHash[1],
+                "passSalt": saltAndHash[0]
+            }).execute().catch(function (err) {
+                console.l(err)
                 if (!(err instanceof er.PassHashErr)) {
                     throw new er.DatabaseErr('changePassword', err);
                 } else {
@@ -150,24 +153,29 @@ module.exports = function (options) {
         });
     };
     p.deleteUser = function (id) {
-        return Users.get(id).delete().run().then(function (res) {
+        return Users.get(id).delete().execute().then(function (res) {
+
             if (res.skipped) {
                 throw new er.NonExistingUserErr(id);
             }
             return res;
         }).catch(function (err) {
-            throw new er.DatabaseErr('deleteUser', err);
+            if (err instanceof er.NonExistingUserErr) {
+                throw err;
+            } else {
+                throw new er.DatabaseErr('deleteUser', err);
+            }
         });
     };
     p.changeUsername = function (id, newUsername) {
         p.isExistantUsername(newUsername).then(function (bool) {
-            if (bool) {
-                throw new er.ExistingUserErr(newUsername);
+            if (!bool) {
+                throw new er.NonExistingUserErr(newUsername);
             } else {
                 return Users.get(id).update({
                     username: newUsername.toLowerCase(),
                     displayName: newUsername
-                });
+                }).execute();
             }
         }).catch(function (err) {
             throw new er.DatabaseErr('changeUsername', err);

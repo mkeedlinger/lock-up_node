@@ -57,3 +57,47 @@ function DatabaseErr(message, original) {
 DatabaseErr.prototype = new Error();
 DatabaseErr.prototype.constructor = DatabaseErr;
 module.exports.DatabaseErr = DatabaseErr;
+
+function RequestErr(message, original) {
+    this.name = "RequestErr";
+    this.message = message || "Something was wrong with your request";
+    if (original) {
+        this.original = original;
+    }
+}
+RequestErr.prototype = new Error();
+RequestErr.prototype.constructor = RequestErr;
+module.exports.RequestErr = RequestErr;
+
+function InternalServerErr(message, original) {
+    this.name = "InternalServerErr";
+    this.message = message || "Something went wrong in the server";
+    if (original) {
+        this.original = original;
+    }
+}
+InternalServerErr.prototype = new Error();
+InternalServerErr.prototype.constructor = InternalServerErr;
+module.exports.InternalServerErr = InternalServerErr;
+
+function BadAuthErr(message, original) {
+    this.name = "BadAuthErr";
+    this.message = message || "The credentials provided were incorrect";
+    if (original) {
+        this.original = original;
+    }
+}
+BadAuthErr.prototype = new Error();
+BadAuthErr.prototype.constructor = BadAuthErr;
+module.exports.BadAuthErr = BadAuthErr;
+
+function ClientErr(message, original) {
+    this.name = "ClientErr";
+    this.message = message || "Something went wrong with the client";
+    if (original) {
+        this.original = original;
+    }
+}
+ClientErr.prototype = new Error();
+ClientErr.prototype.constructor = ClientErr;
+module.exports.ClientErr = ClientErr;

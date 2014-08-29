@@ -16,8 +16,8 @@ module.exports = function (pass) {
         hash = hash.toString('base64');
         return scrypt.passwordHash(hash, scrypt.p);
     }).then(function (finalHash) {
-        return Promise.resolve(salt, finalHash);
-    }, function (err) {
-        throw new er.PassHashErr(null, err);
+        return [salt, finalHash];
+    }).catch(function (err) {
+        throw new er.PassHashErr('hashPass', err);
     });
 }
