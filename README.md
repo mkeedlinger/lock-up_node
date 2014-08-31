@@ -2,7 +2,8 @@
 Easy, secure, opinionated authentication
 
 ## Features
-- Crazy secure password hashing (using scrypt and PBKDF2)
+- Crazy secure password hashing (using [scrypt](https://www.npmjs.org/package/scrypt)
+and [PBKDF2](http://nodejs.org/api/crypto.html#crypto_crypto_pbkdf2_password_salt_iterations_keylen_callback))
 - Simple API, high level of abstraction
 - Easy to scale out
 - Has 3 modes: plugin, server, and client
