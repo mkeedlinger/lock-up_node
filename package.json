@@ -1,6 +1,6 @@
 {
     "name": "lock-up",
-    "description": "Easy, secure, opinionated authentication",
+    "description": "Easy, secure, opinionated authentication that doesn't comprimise",
     "version": "0.1.0",
     "homepage": "https://github.com/mkeedlinger/lock-up_node/wiki",
     "repository": {
@@ -9,7 +9,7 @@
     },
     "bugs": "https://github.com/mkeedlinger/lock-up_node/issues",
     "author": "mkeedlinger",
-    "license": "GNU GPL v3.0",
+    "license": "GPL-3.0",
     "main": "./index",
     "dependencies": {
         "bluebird": "~2.3.0",
